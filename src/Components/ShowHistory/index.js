@@ -84,8 +84,19 @@ class ShowHistory extends Component {
     this.setState({searchInput: event.target.value})
   }
 
+  deleteItem = id => {
+    const {detailList} = this.state
+
+    const delItem = detailList.filter(eachItem => id !== eachItem.id)
+    this.setState({detailList: delItem})
+  }
+
   render() {
     const {searchInput, detailList} = this.state
+    const searchResult = detailList.filter(eachList =>
+      eachList.title.toLowerCase().includes(searchInput.toLowerCase()),
+    )
+
     return (
       <div className="bg-container">
         <div className="nav-bar">
@@ -109,17 +120,27 @@ class ShowHistory extends Component {
               placeholder="search history"
               className="input-card"
               value={searchInput}
-              onChange={updateDisplay}
+              onChange={this.updateDisplay}
             />
           </div>
         </div>
-        <div className="history-container">
-          <ul className="list-container">
-            {detailList.map(eachList => (
-              <HistoryItem eachList={eachList} key={eachList.id} />
-            ))}
-          </ul>
-        </div>
+        {searchResult.length > 0 ? (
+          <div className="history-container">
+            <ul className="list-container">
+              {searchResult.map(eachList => (
+                <HistoryItem
+                  eachList={eachList}
+                  key={eachList.id}
+                  deleteItem={this.deleteItem}
+                />
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="blank-card">
+            <p className="blank-history">there is no history to show</p>
+          </div>
+        )}
       </div>
     )
   }
